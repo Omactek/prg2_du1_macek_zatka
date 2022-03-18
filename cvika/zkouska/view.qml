@@ -1,98 +1,57 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQml.Models 2.1
-import QtLocation 5.14
-import QtPositioning 5.14
+import QtQuick 2.2
+import QtQuick.Controls 1.2
+import QtQuick.Layouts 1.1
+import OskPlugin 1.0
 
-Row {
-    width: 800
-    height: 500
+Rectangle {
+    id: root
+    width: 1024
+    height: 633
 
-    // Create property holding model of currently selected city
-    property var currentModelItem;
-
-    ListView {
-        id: cityList
-        width: 250
-        height: parent.height
-        focus: true
-
-        Component {
-            id: cityListDelegate
-            Item {
-                width: parent.width
-                height: childrenRect.height
-                Text {
-                    text: model.display
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: cityList.currentIndex = index
-                }
-            }
-        }
-
-        model: DelegateModel {
-            id: cityListDelegateModel
-            model: cityListModel
-            delegate: cityListDelegate
-        }
-
-        // When current item of the list is changed, update the currentModelItem property
-        onCurrentItemChanged: currentModelItem = cityListDelegateModel.items.get(cityList.currentIndex).model
-
-        highlight: Rectangle {
-            color: "lightsteelblue"
-        }
+    ListModel {
+        id: personalData
+        ListElement { dataLabel: "Firstname";  dataValue: "Herbert"; }
+        ListElement { dataLabel: "Lastname"; dataValue: "Roth"; }
+        ListElement { dataLabel: "Plays"; dataValue: "Guitar"; }
+        ListElement { dataLabel: "Age"; dataValue: "65";}
+        ListElement { dataLabel: "Hobby"; dataValue: "Walking"; }
+        ListElement { dataLabel: "Birthday"; dataValue: "14.12.1926"; }
+        ListElement {  dataLabel: "City";dataValue: "Suhl"; }
+        ListElement { dataLabel: "Country"; dataValue: "Germany"; }
     }
+   
+    ScrollView {
+        anchors.fill: parent
 
-    Column {
-        Text {
-            text: cityList.currentIndex
-        }
-        Text {
-            text: "Rozloha:"
-        }
-        Text {
-            textFormat: Text.RichText // We need RichText to render upper index correctly
-            text: currentModelItem.area+" km<sup>2</sup>"
-        }
-        Text {
-            text: "Počet obyvatel"
-        }
-        Text {
-                text: currentModelItem.population
-        }
-    }
+        ListView {
+            id: listView
+            anchors.fill: parent
+            clip: true
+            model: personalData
+            focus: true
 
-    Plugin {
-        id: mapPlugin
-        name: "osm" // We want OpenStreetMap map provider
-        PluginParameter {
-             name:"osm.mapping.custom.host"
-             value:"https://maps.wikimedia.org/osm/" // We want custom tile server for tiles without labels
-        }
-    }
+            delegate: FocusScope {
+                x: rectangle.x;
+                y: rectangle.y
+                width: rectangle.width;
+                height: rectangle.height
 
-    Map {
-        width: 500
-        height: parent.height
-
-        plugin: mapPlugin
-        activeMapType: supportedMapTypes[supportedMapTypes.length - 1] // Use our custom tile server
-
-        center: currentModelItem.location // Center to the selected city
-        zoomLevel: 10
-
-        MapItemView {
-            model: cityListModel
-            delegate: MapQuickItem {
-                coordinate: model.location
-                sourceItem: Text{
-                    text: model.display
+                Rectangle {
+                    id: rectangle
+                    height: 66
+                    width: 500
+                    border.color: "grey"
+                    border.width: 2
+                    TextInput {
+                        anchors.centerIn: parent
+                        text: dataValue
+                        font.pixelSize: 24
+                        focus: true
+                        activeFocusOnTab: true
+                        onActiveFocusChanged: if(activeFocus) { listView.currentIndex = index }
+                    }
                 }
             }
         }
     }
-
 }
