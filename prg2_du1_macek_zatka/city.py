@@ -79,3 +79,5 @@ ctxt.setContextProperty("countdownModel", countdown_model)
 view.setSource(url)
 view.show()
 app.exec_()
+
+zmenaa
