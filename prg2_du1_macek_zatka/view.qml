@@ -15,7 +15,7 @@ Row {
             id: check_obce
             text: "Obce"
         }
-        Column {
+        Item {
             id: slide_item
             anchors.top: parent.bottom
             anchors.left: parent.left
@@ -24,26 +24,28 @@ Row {
                 anchors.horizontalCenter: slide.horizontalCenter
                 anchors.bottom: slide.top
             }
-            Slider {
+            RangeSlider {
                 id: slide
                 from: 1
                 to: 1000000
+                first.value: 1
+                second.value: 1000000
+                stepSize: 1.0
+                snapMode: slide.SnapAlways
             }
             Text {
-                text: "1 obyvatel"
+                text: slide.first.value + " obyvatel"
                 anchors.top: slide.bottom
                 anchors.left: slide.left
             }
             Text {
-                text: "1 000 000 obyvatel"
+                text: slide.second.value + "obyvatel"
                 anchors.top: slide.bottom
                 anchors.right: slide.right
             }
         }
         Text{
             text: "něco"
-            anchors.top: slide_item.bottom
-            anchors.left: slide_item.left
         }
     }
 }
