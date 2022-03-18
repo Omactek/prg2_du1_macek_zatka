@@ -1,12 +1,20 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+import QtQml.Models 2.1
+import QtLocation 5.14
+import QtPositioning 5.14
+import QtQuick.Layouts 1.1
 
 
-Row {
-    width: 800
+Row{
+    width: 1000
     height: 500
 
     Column {
+        id: first_column
+        width: parent.width/4
+        height: parent.height
+
         CheckBox {
             id: check_city
             text: "Města"
@@ -68,6 +76,7 @@ Row {
 
                 ComboBox {
                     id: combo_kraj
+                    currentIndex: -1
                     model: ["First", "Second", "Third"]
                 }
 
@@ -77,9 +86,66 @@ Row {
                 }
 
                 ComboBox {
+                    currentIndex: -1
                     id: combo_okres
                     model: ["First", "Second", "Third"]
                 }
+            }
+        }
+
+        Rectangle {
+            id: filter_rec
+            anchors.top: combo_rec.bottom
+            anchors.left: combo_rec.left
+            anchors.topMargin: 140
+
+            Button {
+                text: "Filtrovat"
+            }
+        }
+    }
+
+    Plugin {
+        id: mapPlugin
+        name: "osm" // We want OpenStreetMap map provider
+        PluginParameter {
+             name:"osm.mapping.custom.host"
+             value:"https://maps.wikimedia.org/osm/" // We want custom tile server for tiles without labels
+        }
+    }
+
+    Map { //mapa zatím nefuguje ale alespoň je tam vídět rozměr
+        id: map
+        width: parent.width/2
+        height: parent.height
+
+        plugin: mapPlugin
+        activeMapType: supportedMapTypes[supportedMapTypes.length - 1] // Use our custom tile server
+
+        center: currentModelItem.location // Center to the selected city
+        zoomLevel: 10
+
+        MapItemView {
+            model: cityListModel
+            delegate: MapQuickItem {
+                coordinate: model.location
+                sourceItem: Text{
+                    text: model.display
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        id: third_column
+        width: parent.width/4
+        height: parent.height
+
+        ListView{
+            id: list_display
+            model: ContactModel {}
+            delegate: Text {
+                text: name + ": " + number
             }
         }
     }
