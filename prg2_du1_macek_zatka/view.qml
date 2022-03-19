@@ -111,7 +111,7 @@ property var currentModelItem;
         id: mapPlugin
         name: "osm" // We want OpenStreetMap map provider
         PluginParameter {
-             name:"osm.mapping.custom.host"
+             name:"https://tile.openstreetmap.org"
              value:"https://a.tile.openstreetmap.de/${z}/${x}/${y}.png" // We want custom tile server for tiles without labels
         }
     }
