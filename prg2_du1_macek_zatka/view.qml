@@ -29,10 +29,9 @@ property var currentModelItem;
 
         Rectangle {
             id: slide_rec
-            height: fill
             anchors.top: check_obec.bottom
             anchors.left: check_obec.left
-            anchors.topMargin: 10
+            anchors.topMargin: 15
 
             Text {
                 text: "Počet obyvatel"
@@ -136,19 +135,21 @@ property var currentModelItem;
                 }
             }
         }
+
         MapItemView {
-                model: ObceModel
-                delegate: MapQuickItem {
-                    coordinate: model.location
-                    sourceItem: Rectangle {
-                        width: 10
-                        height: width
-                        color: "red"
-                        border.color: "black"
-                        border.width: 1
-                        radius: width*0.5
-                    }
+            id: main_map
+            model: ObceModel
+            delegate: MapQuickItem {
+                coordinate: model.location
+                sourceItem: Rectangle {
+                    width: 10
+                    height: width
+                    color: "red"
+                    border.color: "black"
+                    border.width: 1
+                    radius: width*0.5
                 }
+            }
         }
     }
 
