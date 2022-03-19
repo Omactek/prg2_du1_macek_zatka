@@ -6,16 +6,17 @@ import QtPositioning 5.14
 import QtQuick.Layouts 1.1
 
 
-Row{
-    width: 1000
-    height: 500
+RowLayout{
+    implicitWidth: 1000
+    implicitHeight: 500
+    anchors.fill: parent
 
-property var currentModelItem;
+    property var currentModelItem;
 
-    Column {
+    ColumnLayout {
         id: first_column
-        width: parent.width/4
-        height: parent.height
+        width: 250
+        Layout.fillHeight: true
 
         CheckBox {
             id: check_city
@@ -117,8 +118,8 @@ property var currentModelItem;
 
     Map { //mapa zatím nefuguje ale alespoň je tam vídět rozměr
         id: map
-        width: parent.width/2
-        height: parent.height
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
         plugin: mapPlugin
         activeMapType: supportedMapTypes[supportedMapTypes.length - 1] // Use our custom tile server
@@ -155,8 +156,9 @@ property var currentModelItem;
 
     ListView {
             id: seznamObci
-            width: parent.width/4
-            height: parent.height
+            width: 250
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignLeft
             focus: true
 
             Component {
