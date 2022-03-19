@@ -15,8 +15,8 @@ RowLayout{
 
     ColumnLayout {
         id: first_column
-        width: 250
-        Layout.fillHeight: true
+        Layout.alignment: Qt.AlignLeft
+        focus: true
 
         CheckBox {
             id: check_city
@@ -30,7 +30,6 @@ RowLayout{
 
         Rectangle {
             id: slide_rec
-            height: fill
             anchors.top: check_obec.bottom
             anchors.left: check_obec.left
             anchors.topMargin: 10
@@ -66,6 +65,7 @@ RowLayout{
 
         Rectangle{
             id: combo_rec
+            width: 250
             anchors.top: slide_rec.bottom
             anchors.left: slide_rec.left
             anchors.topMargin: 60 //velice neelegantní rešení
@@ -121,6 +121,7 @@ RowLayout{
         id: map
         Layout.fillWidth: true
         Layout.fillHeight: true
+        Layout.alignment: Qt.AlignRight
 
         plugin: mapPlugin
         activeMapType: supportedMapTypes[supportedMapTypes.length - 1] // Use our custom tile server
@@ -155,7 +156,7 @@ RowLayout{
 
     ListView {
             id: seznamObci
-            width: 250
+            width: 200
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignLeft
             focus: true
