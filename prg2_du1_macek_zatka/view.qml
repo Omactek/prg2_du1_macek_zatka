@@ -10,6 +10,8 @@ Row{
     width: 1000
     height: 500
 
+property var currentModelItem;
+
     Column {
         id: first_column
         width: parent.width/4
@@ -110,7 +112,7 @@ Row{
         name: "osm" // We want OpenStreetMap map provider
         PluginParameter {
              name:"osm.mapping.custom.host"
-             value:"https://maps.wikimedia.org/osm/" // We want custom tile server for tiles without labels
+             value:"https://a.tile.openstreetmap.de/${z}/${x}/${y}.png" // We want custom tile server for tiles without labels
         }
     }
 
@@ -126,7 +128,7 @@ Row{
         zoomLevel: 10
 
         MapItemView {
-            model: cityListModel
+            model: ObceModel
             delegate: MapQuickItem {
                 coordinate: model.location
                 sourceItem: Text{
@@ -134,19 +136,69 @@ Row{
                 }
             }
         }
-    }
-
-    Rectangle {
-        id: third_column
-        width: parent.width/4
-        height: parent.height
-
-        ListView{
-            id: list_display
-            model: ContactModel {}
-            delegate: Text {
-                text: name + ": " + number
-            }
+        MapItemView {
+                model: ObceModel
+                delegate: MapQuickItem {
+                    coordinate: model.location
+                    sourceItem: Rectangle {
+                        width: 10
+                        height: width
+                        color: "red"
+                        border.color: "black"
+                        border.width: 1
+                        radius: width*0.5
+                    }
+                }
         }
     }
+
+    ListView {
+            id: seznamObci
+            width: parent.width/4
+            height: parent.height
+            focus: true
+
+            Component {
+                id: settlementListDelegate
+                Item {
+                    width: parent.width
+                    height: childrenRect.height
+                    Text {
+                        text: model.display
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: seznamObci.currentIndex = index
+                    }
+                }
+            }
+
+            model: DelegateModel {
+                id: settlementListDelegateModel
+                model: ObceModel
+                delegate: settlementListDelegate
+            }
+
+            onCurrentItemChanged: currentModelItem = settlementListDelegateModel.items.get(seznamObci.currentIndex).model
+
+            highlight: Rectangle {
+                color: "lightsteelblue"
+            }
+    }
+
+// Zakomentoováno, protože mi to nefungovalo
+
+//    Rectangle {
+//        id: third_column
+//        width: parent.width/4
+////        height: parent.height
+//
+//        ListView{
+//            id: list_display
+//            model: ContactModel {}
+//            delegate: Text {
+//                text: name + ": " + number
+//            }
+//        }
+//    }
 }
