@@ -9,7 +9,7 @@ import typing
 from enum import Enum
 
 VIEW_URL = "view.qml"
-SEZNAM_OBCI = "obce.geojson"
+SEZNAM_OBCI = "obce.geojson" #synch
 
 class ObceModel(QAbstractListModel):
     
