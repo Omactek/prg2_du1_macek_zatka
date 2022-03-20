@@ -70,12 +70,18 @@ class ObceModel(QAbstractListModel):
         print(roles)
         return roles
 
+
 app = QGuiApplication(sys.argv)
 view = QQuickView()
 url = QUrl(VIEW_URL)
 obce_model = ObceModel(SEZNAM_OBCI)
+
+obce_proxy = QtCore.QSortFilterProxyModel()
+obce_proxy.setSourceModel(obce_model)
+
 ctxt = view.rootContext()
 ctxt.setContextProperty("ObceModel", obce_model)
+ctxt.setContextProperty("ObceProxy", obce_proxy)
 view.setSource(url)
 view.show()
 app.exec_()
