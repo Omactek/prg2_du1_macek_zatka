@@ -1,72 +1,67 @@
-from PySide2.QtCore import QObject, Slot, Property, QUrl, Signal, QTimer, QAbstractListModel, QByteArray
+from PySide2.QtCore import QObject, Signal, Slot, Property, QUrl, QAbstractListModel, QByteArray, QRegExp
 from PySide2.QtGui import QGuiApplication
 from PySide2.QtQuick import QQuickView
 from PySide2.QtPositioning import QGeoCoordinate
 from PySide2 import QtCore
+from enum import Enum
+import typing
 import sys
 import json
-import typing
-from enum import Enum
 
 VIEW_URL = "view.qml"
-SEZNAM_OBCI = "obce.geojson"
+CITY_LIST_FILE = "souradnice.json"
 
-class ObceModel(QAbstractListModel):
-    
+
+class CityListModel(QAbstractListModel):
+    """Class for maintaining list of cities"""
+
     class Roles(Enum):
-        LOC = QtCore.Qt.UserRole+0
-        POP = QtCore.Qt.UserRole+1
-        AREA = QtCore.Qt.UserRole+2
-        DISTRICT = QtCore.Qt.UserRole+3
-        REGION = QtCore.Qt.UserRole+4
-        IS_CITY = QtCore.Qt.UserRole+5
-        
-    def __init__(self, filename=None):
+        """Enum with added custom roles"""
+        LOCATION = QtCore.Qt.UserRole+0
+        AREA = QtCore.Qt.UserRole+1
+        POPULATION = QtCore.Qt.UserRole+2
+
+    def __init__(self,filename=None):
+        """Initialize and load list from given file"""
         QAbstractListModel.__init__(self)
-        self.seznam_obci = []
+        self.city_list = []
         if filename:
             self.load_from_json(filename)
 
-    def load_from_json(self, filename):
-        with open (filename, encoding = "utf-8") as file:
-            self.seznam_obci = json.load(file)
+    def load_from_json(self,filename):
+        """Load list of cities from given file"""
+        with open(filename,encoding="utf-8") as f:
+            self.city_list = json.load(f)
 
-            for entry in self.seznam_obci["features"]:
-                lon = entry["geometry"]["coordinates"][0]
-                lat = entry["geometry"]["coordinates"][1]
-                entry["geometry"]["coordinates"] = QGeoCoordinate(float(lat), float(lon))
-    
+            # Create QGeoCoordinate from the original JSON location
+            for c in self.city_list:
+                pos = c['location']
+                lon,lat = pos.split("(")[1].split(")")[0].split(" ") # Get the part between brackets and split it on space
+                c['location'] = QGeoCoordinate(float(lat),float(lon)) # Create QGeoCoordinate and overwrite original `location` entry
+
     def rowCount(self, parent:QtCore.QModelIndex=...) -> int:
-        return len(self.seznam_obci["features"])
+        """ Return number of cities in the list"""
+        return len(self.city_list)
 
     def data(self, index:QtCore.QModelIndex, role:int=...) -> typing.Any:
-        if role == QtCore.Qt.DisplayRole:
-            return self.seznam_obci["features"][index.row()]["properties"]["NAZ_OBEC"]
-        elif role == self.Roles.LOC.value: 
-            return self.seznam_obci["features"][index.row()]["geometry"]["coordinates"]
-        elif role == self.Roles.POP.value:
-            return self.seznam_obci["features"][index.row()]["properties"]["POCET_OBYV"]
-        elif role == self.Roles.AREA.value:
-            return round(self.seznam_obci["features"][index.row()]["properties"]["area"],2)
-        elif role == self.Roles.DISTRICT.value:
-            return self.seznam_obci["features"][index.row()]["properties"]["NAZ_OKRES"]
-        elif role == self.Roles.REGION.value:
-            return self.seznam_obci["features"][index.row()]["properties"]["NAZ_KRAJ"]
-        elif role == self.Roles.IS_CITY.value:
-            if self.seznam_obci["features"][index.row()]["properties"]["is_city"] == "TRUE":
-                return "Město"
-            else:
-                return "Vesnice" 
-            #return self.seznam_obci["features"][index.row()]["properties"]["is_city"]
+        """ For given index and role return information of the city"""
+        # print(index.row(),role) # Print requested row and role for debugging
+        if role == QtCore.Qt.DisplayRole: # On DisplayRole return name
+            return self.city_list[index.row()]["muniLabel"]
+        elif role == self.Roles.LOCATION.value: # On location role return coordinates
+            return self.city_list[index.row()]["location"]
+        elif role == self.Roles.AREA.value: # On area role return area
+            return self.city_list[index.row()]["area"]
+        elif role == self.Roles.POPULATION.value: # On population role return population
+            return self.city_list[index.row()]["population"]
 
     def roleNames(self) -> typing.Dict[int, QByteArray]:
+        """Returns dict with role numbers and role names for default and custom roles together"""
+        # Append custom roles to the default roles and give them names for a usage in the QML
         roles = super().roleNames()
-        roles[self.Roles.LOC.value] = QByteArray(b'location')
-        roles[self.Roles.POP.value] = QByteArray(b'population')
+        roles[self.Roles.LOCATION.value] = QByteArray(b'location')
         roles[self.Roles.AREA.value] = QByteArray(b'area')
-        roles[self.Roles.DISTRICT.value] = QByteArray(b'district')
-        roles[self.Roles.REGION.value] = QByteArray(b'region')
-        roles[self.Roles.IS_CITY.value] = QByteArray(b'township')
+        roles[self.Roles.POPULATION.value] = QByteArray(b'population')
         print(roles)
         return roles
 
@@ -74,15 +69,20 @@ class ObceModel(QAbstractListModel):
 app = QGuiApplication(sys.argv)
 view = QQuickView()
 url = QUrl(VIEW_URL)
-obce_model = ObceModel(SEZNAM_OBCI)
-
+citylist_model = CityListModel(CITY_LIST_FILE)
 obce_proxy = QtCore.QSortFilterProxyModel()
-obce_proxy.setSourceModel(obce_model)
-obce_proxy.setSortingEnabled(True)
+obce_proxy.setSourceModel(citylist_model)
+obce_proxy.setSortRole(2)
+obce_proxy.setSortRole(2)
+obce_proxy.setFilterRegExp(QRegExp("Adamov", QtCore.Qt.CaseSensitivity.CaseSensitive,
+                                    QRegExp.FixedString))
 
 ctxt = view.rootContext()
-ctxt.setContextProperty("ObceModel", obce_model)
+ctxt.setContextProperty('cityListModel',citylist_model)
+
+
 ctxt.setContextProperty("ObceProxy", obce_proxy)
+
 view.setSource(url)
 view.show()
 app.exec_()
