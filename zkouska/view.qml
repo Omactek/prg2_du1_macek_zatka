@@ -129,7 +129,7 @@ RowLayout {
 
         model: DelegateModel {
             id: settlementListDelegateModel
-            model: ObceModel
+            model: ObceProxy
             delegate: settlementListDelegate
         }
 
@@ -162,7 +162,7 @@ RowLayout {
         zoomLevel: 10
 
         MapItemView {
-            model: ObceModel
+            model: ObceProxy
             delegate: MapQuickItem {
                 coordinate: model.location
                 sourceItem: Text{
@@ -173,7 +173,7 @@ RowLayout {
 
         MapItemView {
             id: main_map
-            model: ObceModel
+            model: ObceProxy
             delegate: MapQuickItem {
                 coordinate: model.location
                 sourceItem: Rectangle {
