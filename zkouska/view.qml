@@ -3,65 +3,140 @@ import QtQuick.Controls 2.14
 import QtQml.Models 2.1
 import QtLocation 5.14
 import QtPositioning 5.14
+import QtQuick.Layouts 1.1
 
-Row {
-    width: 800
-    height: 500
 
-    // Create property holding model of currently selected city
+RowLayout {
+    anchors.fill: parent
+
     property var currentModelItem;
 
+    Column {
+        id: first_column
+        anchors.fill: parent
+        Layout.minimumWidth: 210
+
+        CheckBox {
+            id: check_city
+            text: "Města"
+        }
+
+        CheckBox {
+            id: check_obec
+            text: "Obce"
+        }
+
+        Rectangle {
+            id: slide_rec
+            anchors.top: check_obec.bottom
+            anchors.left: check_obec.left
+            anchors.topMargin: 10
+
+            Text {
+                text: "Počet obyvatel"
+                anchors.horizontalCenter: slide.horizontalCenter
+                anchors.bottom: slide.top
+            }
+
+            RangeSlider {
+                id: slide
+                from: 1
+                to: 1000000
+                first.value: 1
+                second.value: 1000000
+                stepSize: 1000 //zatím nechávám na 1000, jinak to neházi integery
+                snapMode: RangeSlider.SnapAlways 
+            }
+
+            Text {
+                text: slide.first.value + " obyvatel"
+                anchors.top: slide.bottom
+                anchors.left: slide.left
+            }
+
+            Text {
+                text: slide.second.value + " obyvatel"
+                anchors.top: slide.bottom
+                anchors.right: slide.right
+            }
+        }
+
+        Rectangle{
+            id: combo_rec
+            anchors.top: slide_rec.bottom
+            anchors.left: slide_rec.left
+            anchors.topMargin: 60 //velice neelegantní rešení
+
+            Column{
+                spacing: 5
+                Text{
+                    id: combo_kraj_label
+                    text: "Kraj:"
+                }
+
+                ComboBox {
+                    id: combo_kraj
+                    currentIndex: -1
+                    model: ["First", "Second", "Third"]
+                }
+
+                Text{
+                    id: combo_okres_label
+                    text: "Okres:"
+                }
+
+                ComboBox {
+                    currentIndex: -1
+                    id: combo_okres
+                    model: ["First", "Second", "Third"]
+                }
+            }
+        }
+
+        Rectangle {
+            id: filter_rec
+            anchors.top: combo_rec.bottom
+            anchors.left: combo_rec.left
+            anchors.topMargin: 140
+
+            Button {
+                text: "Filtrovat"
+            }
+        }
+    }
+    
     ListView {
-        id: cityList
-        width: 250
-        height: parent.height
+        id: seznamObci
+        Layout.minimumWidth: 210 //this could be changed to item in component width
+        Layout.fillWidth: false
+        Layout.fillHeight: true
         focus: true
 
         Component {
-            id: cityListDelegate
+            id: settlementListDelegate
             Item {
-                width: parent.width
+                width: childrenRect.width
                 height: childrenRect.height
                 Text {
                     text: model.display
                 }
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: cityList.currentIndex = index
+                    onClicked: seznamObci.currentIndex = index
                 }
             }
         }
 
         model: DelegateModel {
-            id: cityListDelegateModel
-            model: ObceProxy
-            delegate: cityListDelegate
+            id: settlementListDelegateModel
+            model: ObceModel
+            delegate: settlementListDelegate
         }
 
-        // When current item of the list is changed, update the currentModelItem property
-        onCurrentItemChanged: currentModelItem = cityListDelegateModel.items.get(cityList.currentIndex).model
+        onCurrentItemChanged: currentModelItem = settlementListDelegateModel.items.get(seznamObci.currentIndex).model
 
         highlight: Rectangle {
             color: "lightsteelblue"
-        }
-    }
-
-    Column {
-        Text {
-            text: cityList.currentIndex
-        }
-        Text {
-            text: "Rozloha:"
-        }
-        Text {
-            textFormat: Text.RichText // We need RichText to render upper index correctly
-            text: currentModelItem.area+" km<sup>2</sup>"
-        }
-        Text {
-            text: "Počet obyvatel"
-        }
-        Text {
-                text: currentModelItem.population
         }
     }
 
@@ -69,14 +144,16 @@ Row {
         id: mapPlugin
         name: "osm" // We want OpenStreetMap map provider
         PluginParameter {
-             name:"osm.mapping.custom.host"
-             value:"https://maps.wikimedia.org/osm/" // We want custom tile server for tiles without labels
+             name:"https://tile.openstreetmap.org"
+             value:"https://a.tile.openstreetmap.de/${z}/${x}/${y}.png" // We want custom tile server for tiles without labels
         }
     }
 
-    Map {
-        width: 500
-        height: parent.height
+    Map { //mapa zatím nefuguje ale alespoň je tam vídět rozměr
+        id: map
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.alignment: Qt.AlignRight
 
         plugin: mapPlugin
         activeMapType: supportedMapTypes[supportedMapTypes.length - 1] // Use our custom tile server
@@ -85,7 +162,7 @@ Row {
         zoomLevel: 10
 
         MapItemView {
-            model: cityListModel
+            model: ObceModel
             delegate: MapQuickItem {
                 coordinate: model.location
                 sourceItem: Text{
@@ -93,6 +170,21 @@ Row {
                 }
             }
         }
-    }
 
+        MapItemView {
+            id: main_map
+            model: ObceModel
+            delegate: MapQuickItem {
+                coordinate: model.location
+                sourceItem: Rectangle {
+                    width: 10
+                    height: width
+                    color: "red"
+                    border.color: "black"
+                    border.width: 1
+                    radius: width*0.5
+                }
+            }
+        }
+    }
 }
