@@ -129,7 +129,7 @@ RowLayout {
 
         model: DelegateModel {
             id: settlementListDelegateModel
-            model: ObceModel
+            model: KrajeProxy
             delegate: settlementListDelegate
         }
 

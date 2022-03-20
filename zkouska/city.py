@@ -77,13 +77,12 @@ obce_model = ObceModel(SEZNAM_OBCI)
 
 kraje_proxy = QtCore.QSortFilterProxyModel()
 kraje_proxy.setSourceModel(obce_model)
-kraje_proxy.setFilterRole(4)
-kraje_proxy.setFilterRegExp(QRegExp("Zlínský kraj", QtCore.Qt.CaseSensitivity.CaseInsensitive,
-                                    QRegExp.FixedString))
+kraje_proxy.setFilterRole(3)
+kraje_proxy.setFilterRegExp(QRegExp("Olomoucký kraj", QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
 
 ctxt = view.rootContext()
 ctxt.setContextProperty("ObceModel", obce_model)
-ctxt.setContextProperty("ObceModel", obce_model)
+ctxt.setContextProperty("KrajeProxy", kraje_proxy)
 view.setSource(url)
 view.show()
 app.exec_()
