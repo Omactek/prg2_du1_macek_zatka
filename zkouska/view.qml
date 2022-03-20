@@ -5,7 +5,6 @@ import QtLocation 5.14
 import QtPositioning 5.14
 import QtQuick.Layouts 1.1
 
-
 RowLayout {
     anchors.fill: parent
 
@@ -104,10 +103,10 @@ RowLayout {
             }
         }
     }
-    
+
     ListView {
         id: seznamObci
-        Layout.minimumWidth: 210 //this could be changed to item in component width
+        Layout.minimumWidth: 210 //this could be prob changed to item in component width
         Layout.fillWidth: false
         Layout.fillHeight: true
         focus: true
@@ -142,14 +141,14 @@ RowLayout {
 
     Plugin {
         id: mapPlugin
-        name: "osm" // We want OpenStreetMap map provider
+        name: "osm"
         PluginParameter {
              name:"https://tile.openstreetmap.org"
              value:"https://a.tile.openstreetmap.de/${z}/${x}/${y}.png" // We want custom tile server for tiles without labels
         }
     }
 
-    Map { //mapa zatím nefuguje ale alespoň je tam vídět rozměr
+    Map {
         id: map
         Layout.fillWidth: true
         Layout.fillHeight: true

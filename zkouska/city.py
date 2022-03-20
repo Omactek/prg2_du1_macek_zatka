@@ -78,6 +78,7 @@ obce_model = ObceModel(SEZNAM_OBCI)
 
 obce_proxy = QtCore.QSortFilterProxyModel()
 obce_proxy.setSourceModel(obce_model)
+obce_proxy.setSortingEnabled(True)
 
 ctxt = view.rootContext()
 ctxt.setContextProperty("ObceModel", obce_model)
