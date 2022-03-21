@@ -11,6 +11,21 @@ from enum import Enum
 VIEW_URL = "view.qml"
 SEZNAM_OBCI = "obce.geojson"
 
+def choose_district(index):
+    districts = [["Praha"],[ "České Budějovice","Český Krumlov", "Jindřichův Hradec", "Písek",                            "Prachatice",                            "Strakonice",                            "Tábor"],        [ "Blansko",                                "Brno-město",                                "Brno-venkov",                                "Břeclav",                                "Hodonín",                                "Vyškov",                                "Znojmo"],[ "Cheb",                            "Karlovy Vary",                            "Sokolov"],[ "Havlíčkův Brod",                            "Jihlava",                            "Pelhřimov",                            "Třebíč",                            "Žďár nad Sázavou"],[ "Hradec Králové",                                "Jičín",                                "Náchod",                                "Rychnov nad Kněžnou",                                "Trutnov"],[ "Česká Lípa",                        "Jablonec nad Nisou",                        "Liberec",                        "Semily"],[ "Bruntál",                                "Frýdek-Místek",                                "Karviná",                                "Nový Jičín",                                "Opava",                                "Ostrava-město"],[ "Jeseník",                        "Olomouc",                        "Prostějov",                        "Přerov",                        "Šumperk"],[ "Chrudim",                            "Pardubice",                            "Svitavy",                            "Ústí nad Orlicí"],[ "Domažlice",                        "Klatovy",                        "Plzeň-jih",                        "Plzeň-město",                        "Plzeň-sever",                        "Rokycany",                        "Tachov"],[ "Benešov",                            "Beroun",                            "Kladno",                            "Kolín",                            "Kutná Hora",                            "Mělník",                            "Mladá Boleslav",                            "Nymburk",                            "Praha-východ",                            "Praha-západ",                            "Příbram",                            "Rakovník"],[ "Děčín",                        "Chomutov",                        "Litoměřice",                        "Louny",                        "Most",                        "Teplice",                        "Ústí nad Labem"],[ "Kroměříž",                        "Uherské Hradiště",                        "Vsetín",                        "Zlín"]]
+    if int(index) == 0:
+        merged = []
+        for i in range(0,14):
+                merged = merged + districts[i]
+        merged.sort()
+        merged.append("VŠE")
+        return merged
+    
+    di = districts[int(index)-1]
+    a = ['VŠE']
+    dist = a + di
+    return dist
+
 class ObceModel(QAbstractListModel):
     
     class Roles(Enum):
@@ -24,6 +39,9 @@ class ObceModel(QAbstractListModel):
     def __init__(self, filename=None):
         QAbstractListModel.__init__(self)
         self.seznam_obci = []
+        self._area = "Zlínský kraj"
+        self._districts = ["VŠE", "Kroměříž", "Uherské Hradiště", "Vsetín", "Zlín"]
+        self._district = "Zlín"
         if filename:
             self.load_from_json(filename)
 
@@ -69,7 +87,30 @@ class ObceModel(QAbstractListModel):
         roles[self.Roles.IS_CITY.value] = QByteArray(b'township')
         print(roles)
         return roles
+
+
+    def set_area(self, new_val):
+        if new_val != self._area:
+            self._area = new_val
+            self.area_changed.emit(self._area)
+            print("Filter area:", self._area)
+            self.set_districts(choose_district(self.area))
+
+    def set_districts(self, new_val):
+        if new_val != self._districts:
+            self._districts = new_val
+            print("Filter districts:", self._districts)
+            ctxt.setContextProperty("dist", self._districts)
+
+    def set_district(self, new_val):
+        if new_val != self._district:
+            self._district = new_val
+            self.district_changed.emit(self._district)
+            print("Filter final district:", self._district)
+
   
+    def get_district(self):
+        return self._districts
 
     def get_zobrazit_mesta(self):
         return self.zobrazit_mesta    
@@ -79,19 +120,20 @@ class ObceModel(QAbstractListModel):
         return self.get_min_slider
     def get_max_slider(self):
         return self.get_max_slider
-    def get_kraj(self):
-        return self.get_kraj
-    def get_okres(self):
-        return self.get_okres
+
+
+    kraj_change = Signal()
+    area_changed = Signal(str)
+    district_changed = Signal(str)
 
     zobrazit_mesta = Property(bool, get_zobrazit_mesta) 
     zobrazit_vesnice = Property(bool, get_zobrazit_vesnice)
     
     min_slider = Property(int, get_min_slider)
     max_slider = Property(int, get_max_slider)
-    
-    kraj_vybrany = Property(int, get_kraj)
-    okres_vybrany = Property(int, get_okres)
+
+    area = Property(str, lambda self: self._area, set_area, notify=area_changed)
+    district = Property(str, get_district, set_district, notify=district_changed)
 
     @Slot()
     def filtr_checkboxy(self):

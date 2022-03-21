@@ -105,13 +105,15 @@ RowLayout {
                 ComboBox {
                     id: combo_kraj
                     currentIndex: -1
-                    model: ["First", "Second", "Third"]
+                    model: ["VŠE","Hlavní město Praha","Jihočeský kraj","Jihomoravský kraj","Karlovarský kraj",
+                    "Kraj Vysočina","Královéhradecký kraj","Liberecký kraj","Moravskoslezský kraj","Olomoucký kraj",
+                    "Pardubický kraj","Plzeňský kraj","Středočeský kraj","Ústecký kraj","Zlínský kraj"]
                     onCurrentIndexChanged: ObceModel.filtr_checkboxy()
                 }
                 Binding{
                     target: ObceModel
-                    property: "kraj_vybrany"
-                    value: combo_kraj.index
+                    property: "area"
+                    value: combo_kraj.currentIndex
                 }
 
                 Text{
@@ -122,13 +124,13 @@ RowLayout {
                 ComboBox {
                     currentIndex: -1
                     id: combo_okres
-                    model: ["First", "Second", "Third"]
+                    model: dist
                     onCurrentIndexChanged: ObceModel.filtr_checkboxy()
                 }
                 Binding{
                     target: ObceModel
-                    property: "okres_vybrany"
-                    value: combo_okres.index
+                    property: "district"
+                    value: combo_okres.currentText
                 }
             }
         }
