@@ -19,6 +19,7 @@ RowLayout {
         CheckBox {
             id: check_city
             text: "Města"
+            onCheckStateChanged: ObceModel.filtr_checkboxy()
         }
 
         CheckBox {
