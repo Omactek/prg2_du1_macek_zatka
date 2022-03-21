@@ -79,12 +79,19 @@ class ObceModel(QAbstractListModel):
         return self.get_min_slider
     def get_max_slider(self):
         return self.get_max_slider
+    def get_kraj(self):
+        return self.get_kraj
+    def get_okres(self):
+        return self.get_okres
 
     zobrazit_mesta = Property(bool, get_zobrazit_mesta) 
     zobrazit_vesnice = Property(bool, get_zobrazit_vesnice)
     
     min_slider = Property(int, get_min_slider)
     max_slider = Property(int, get_max_slider)
+    
+    kraj_vybrany = Property(int, get_kraj)
+    okres_vybrany = Property(int, get_okres)
 
     @Slot()
     def filtr_checkboxy(self):
