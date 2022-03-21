@@ -10,6 +10,10 @@ from enum import Enum
 
 VIEW_URL = "view.qml"
 SEZNAM_OBCI = "obce.geojson"
+kraj_filter_string = "Město" # "Město" or "Vesnice" or ""
+obce_filter_string = "" # "Město" or "Vesnice" or ""
+kraje_filer_string = "Olomoucký kraj" # "" or "<název kraje>"
+okresy_filer_string = "" # "" or "<název okresu>"
 
 class ObceModel(QAbstractListModel):
     
@@ -75,10 +79,20 @@ view = QQuickView()
 url = QUrl(VIEW_URL)
 obce_model = ObceModel(SEZNAM_OBCI)
 
+mesta_proxy = QtCore.QSortFilterProxyModel()
+mesta_proxy.setSourceModel(obce_model)
+mesta_proxy.setFilterRole(obce_model.Roles.IS_CITY.value)
+mesta_proxy.setFilterRegExp(QRegExp(kraj_filter_string, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
+
+obce_proxy = QtCore.QSortFilterProxyModel()
+obce_proxy.setSourceModel(mesta_proxy)
+obce_proxy.setFilterRole(obce_model.Roles.IS_CITY.value)
+obce_proxy.setFilterRegExp(QRegExp(obce_filter_string, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
+
 kraje_proxy = QtCore.QSortFilterProxyModel()
-kraje_proxy.setSourceModel(obce_model)
-kraje_proxy.setFilterRole(3) #works with argument 0 and name of settlement as argument on next line
-kraje_proxy.setFilterRegExp(QRegExp("Olomoucký kraj", QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
+kraje_proxy.setSourceModel(obce_proxy)
+kraje_proxy.setFilterRole(obce_model.Roles.REGION.value)
+kraje_proxy.setFilterRegExp(QRegExp(kraje_filer_string, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
 
 ctxt = view.rootContext()
 ctxt.setContextProperty("ObceModel", obce_model)

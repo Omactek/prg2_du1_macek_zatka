@@ -86,12 +86,17 @@ class ObceModel(QAbstractListModel):
     min_slider = Property(int, get_min_slider)
     max_slider = Property(int, get_max_slider)
 
+<<<<<<< HEAD
     @Slot()
     def filtr_checkboxy(self):
         print("probehlo")
 
         
 
+=======
+    #@Slot()
+    #def filtr_checkboxy(self):
+>>>>>>> 0e16fc6c100e0a7cc0bb3443798a36b7d67dc05b
 
 
 app = QGuiApplication(sys.argv)

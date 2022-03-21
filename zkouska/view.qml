@@ -41,9 +41,9 @@ RowLayout {
             RangeSlider {
                 id: slide
                 from: 1
-                to: 1000000
+                to: 1250000
                 first.value: 1
-                second.value: 1000000
+                second.value: 1250000
                 stepSize: 1000 //zatím nechávám na 1000, jinak to neházi integery
                 snapMode: RangeSlider.SnapAlways 
             }
@@ -162,18 +162,19 @@ RowLayout {
         zoomLevel: 10
 
         MapItemView {
-            model: ObceModel
+            model: KrajeProxy
             delegate: MapQuickItem {
                 coordinate: model.location
                 sourceItem: Text{
                     text: model.display
+                visible: slide.first.value <= model.population && slide.second.value >= model.population //hides based on range slide values
                 }
             }
         }
 
         MapItemView {
             id: main_map
-            model: ObceModel
+            model: KrajeProxy
             delegate: MapQuickItem {
                 coordinate: model.location
                 sourceItem: Rectangle {
@@ -183,6 +184,7 @@ RowLayout {
                     border.color: "black"
                     border.width: 1
                     radius: width*0.5
+                    visible: slide.first.value <= model.population && slide.second.value >= model.population
                 }
             }
         }
