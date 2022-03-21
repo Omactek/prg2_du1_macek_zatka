@@ -1,4 +1,4 @@
-from PySide2.QtCore import QObject, Slot, Property, QUrl, Signal, QTimer, QAbstractListModel, QByteArray
+from PySide2.QtCore import QObject, Slot, Property, QUrl, Signal, QTimer, QAbstractListModel, QByteArray, QRegExp
 from PySide2.QtGui import QGuiApplication
 from PySide2.QtQuick import QQuickView
 from PySide2.QtPositioning import QGeoCoordinate
@@ -42,6 +42,8 @@ class ObceModel(QAbstractListModel):
         self._area = "Zlínský kraj"
         self._districts = ["VŠE", "Kroměříž", "Uherské Hradiště", "Vsetín", "Zlín"]
         self._district = "Zlín"
+        self._zobrazit_mesta = ""
+        self.kraj_filter_string = "Město" # "Město" or "Vesnice" or ""
         if filename:
             self.load_from_json(filename)
 
@@ -95,6 +97,12 @@ class ObceModel(QAbstractListModel):
             self.area_changed.emit(self._area)
             print("Filter area:", self._area)
             self.set_districts(choose_district(self.area))
+    
+    def set_mesta(self, new_val):
+        if new_val != self._zobrazit_mesta:
+            self._zobrazit_mesta = new_val
+            #self.zobrazit_mesta.emit(self._zobrazit_mesta)
+            print("zobrazit_mesta: ", self._zobrazit_mesta)
 
     def set_districts(self, new_val):
         if new_val != self._districts:
@@ -125,7 +133,6 @@ class ObceModel(QAbstractListModel):
     area_changed = Signal(str)
     district_changed = Signal(str)
 
-    zobrazit_mesta = Property(bool, get_zobrazit_mesta) 
     zobrazit_vesnice = Property(bool, get_zobrazit_vesnice)
     
     min_slider = Property(int, get_min_slider)
@@ -134,18 +141,37 @@ class ObceModel(QAbstractListModel):
     area = Property(str, lambda self: self._area, set_area, notify=area_changed)
     district = Property(str, get_district, set_district, notify=district_changed)
 
+    zobrazit_mesta_changed = Signal()
+    zobrazit_mesta = Property(bool, lambda self: self._area, set_mesta, notify = zobrazit_mesta_changed)
+
     @Slot()
     def filtr_checkboxy(self):
+<<<<<<< HEAD
         print("probehlo")
         print(self.area)
+=======
+        if self._zobrazit_mesta == False:
+            self.kraj_filter_string = "Vesnice"
+            mesta_proxy.setFilterRegExp(QRegExp(obce_model.kraj_filter_string, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
+        else:
+            self.kraj_filter_string = "Vesnice"
+>>>>>>> 64745548029a9b90d95cc74b13f0cf22926edce6
 
 
 app = QGuiApplication(sys.argv)
 view = QQuickView()
 url = QUrl(VIEW_URL)
 obce_model = ObceModel(SEZNAM_OBCI)
+
+mesta_proxy = QtCore.QSortFilterProxyModel()
+mesta_proxy.setSourceModel(obce_model)
+mesta_proxy.setFilterRole(obce_model.Roles.IS_CITY.value)
 ctxt = view.rootContext()
 ctxt.setContextProperty("ObceModel", obce_model)
+ctxt.setContextProperty("FinalProxy", mesta_proxy)
+
+#ctxt.setContextProperty("FinalProxy", mesta_proxy)
+
 view.setSource(url)
 view.show()
 app.exec_()

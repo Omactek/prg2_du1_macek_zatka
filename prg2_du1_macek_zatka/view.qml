@@ -204,7 +204,7 @@ RowLayout {
         zoomLevel: 10
 
         MapItemView {
-            model: ObceModel
+            model: FinalProxy
             delegate: MapQuickItem {
                 coordinate: model.location
                 sourceItem: Loader{
@@ -214,6 +214,7 @@ RowLayout {
                         else if (township == "Vesnice")
                             return idNotcityText
                 }
+                visible: slide.first.value <= model.population && slide.second.value >= model.population //hides settlements outside of slideranger range
                 
                 Component{
                     id: idCityText
@@ -239,7 +240,7 @@ RowLayout {
 
         MapItemView {
             id: main_map
-            model: ObceModel
+            model: FinalProxy
             delegate: MapQuickItem {
                 coordinate: model.location
                 sourceItem: Loader{
@@ -249,6 +250,7 @@ RowLayout {
                         else if (township == "Vesnice")
                             return idNotcity
                 }
+                visible: slide.first.value <= model.population && slide.second.value >= model.population
                 
                 Component{
                     id: idCity
