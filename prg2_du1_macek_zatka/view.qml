@@ -106,6 +106,12 @@ RowLayout {
                     id: combo_kraj
                     currentIndex: -1
                     model: ["First", "Second", "Third"]
+                    onCurrentIndexChanged: ObceModel.filtr_checkboxy()
+                }
+                Binding{
+                    target: ObceModel
+                    property: "kraj"
+                    value: combo_kraj.index
                 }
 
                 Text{
@@ -117,6 +123,12 @@ RowLayout {
                     currentIndex: -1
                     id: combo_okres
                     model: ["First", "Second", "Third"]
+                    onCurrentIndexChanged: ObceModel.filtr_checkboxy()
+                }
+                Binding{
+                    target: ObceModel
+                    property: "okres"
+                    value: combo_okres.index
                 }
             }
         }
