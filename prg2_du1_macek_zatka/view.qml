@@ -114,17 +114,6 @@ RowLayout {
                 }
             }
         }
-
-        Rectangle {
-            id: filter_rec
-            anchors.top: combo_rec.bottom
-            anchors.left: combo_rec.left
-            anchors.topMargin: 140
-
-            Button {
-                text: "Filtrovat"
-            }
-        }
     }
     
     ListView {

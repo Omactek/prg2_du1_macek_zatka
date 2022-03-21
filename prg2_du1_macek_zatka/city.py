@@ -89,7 +89,6 @@ class ObceModel(QAbstractListModel):
         roles[self.Roles.DISTRICT.value] = QByteArray(b'district')
         roles[self.Roles.REGION.value] = QByteArray(b'region')
         roles[self.Roles.IS_CITY.value] = QByteArray(b'township')
-        print(roles)
         return roles
     
     def set_mesta(self, new_val):
@@ -112,15 +111,12 @@ class ObceModel(QAbstractListModel):
     def set_districts(self, new_val): #filters districts based on selected area
         if new_val != self._districts:
             self._districts = new_val
-            print(self._districts)
             ctxt.setContextProperty("dist", self._districts)
 
     def set_district(self, new_val):
         if new_val != self._district:
             self._district = new_val
-            print("toto je self._districts: ")
             self.district_changed.emit(self._district)
-            print(self._district)
             self.filtruj_okresy()
 
   
@@ -154,7 +150,6 @@ class ObceModel(QAbstractListModel):
         elif not self._zobrazit_mesta: 
             self.is_city = "Vesnice"
         mesta_proxy.setFilterRegExp(QRegExp(obce_model.is_city, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
-        print("konec")
 
     def filtr_checkbox_obec(self):
         if self._zobrazit_vesnice:
@@ -169,13 +164,11 @@ class ObceModel(QAbstractListModel):
         if kraje_str == "VŠE":
             kraje_str = ""
         kraje_proxy.setFilterRegExp(QRegExp(kraje_str, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
-        print(obce_model._area)
 
     def filtruj_okresy(self):
         okresy_str = self._district
         if okresy_str == "VŠE":
             okresy_str = ""
-        print(okresy_str)
         okresy_proxy.setFilterRegExp(QRegExp(okresy_str, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
 
 app = QGuiApplication(sys.argv)
