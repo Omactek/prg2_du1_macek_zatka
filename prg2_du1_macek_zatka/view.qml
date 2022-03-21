@@ -35,7 +35,7 @@ RowLayout {
             onCheckStateChanged: ObceModel.filtr_checkbox()
             Binding {
                 target: ObceModel
-                property: "zobrazit_mesta"
+                property: "zobrazit_vesnice"
                 value: check_obec.checked
             }
         }
