@@ -110,7 +110,7 @@ RowLayout {
                 }
                 Binding{
                     target: ObceModel
-                    property: "kraj"
+                    property: "kraj_vybrany"
                     value: combo_kraj.index
                 }
 
@@ -127,7 +127,7 @@ RowLayout {
                 }
                 Binding{
                     target: ObceModel
-                    property: "okres"
+                    property: "okres_vybrany"
                     value: combo_okres.index
                 }
             }
