@@ -162,7 +162,7 @@ RowLayout {
         zoomLevel: 10
 
         MapItemView {
-            model: ObceModel
+            model: KrajeProxy
             delegate: MapQuickItem {
                 coordinate: model.location
                 sourceItem: Text{
