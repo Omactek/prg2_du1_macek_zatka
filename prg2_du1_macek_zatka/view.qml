@@ -176,13 +176,35 @@ RowLayout {
             model: ObceModel
             delegate: MapQuickItem {
                 coordinate: model.location
-                sourceItem: Rectangle {
-                    width: 10
-                    height: width
-                    color: "red"
-                    border.color: "black"
-                    border.width: 1
-                    radius: width*0.5
+                sourceItem: Loader{
+                    sourceComponent:
+                        if (township == "Město")
+                            return idCity
+                        else if (township == "Vesnice")
+                            return idNotcity
+                }
+                
+                Component{
+                    id: idCity
+                    Rectangle {
+                        width: 15
+                        height: width
+                        color: "red"
+                        border.color: "black"
+                        border.width: 1
+                        radius: width*0.5
+                    }
+                }
+                Component{
+                    id: idNotcity
+                    Rectangle {
+                        width: 10
+                        height: width
+                        color: "black"
+                        border.color: "black"
+                        border.width: 1
+                        radius: width*0.5
+                    }
                 }
             }
         }
