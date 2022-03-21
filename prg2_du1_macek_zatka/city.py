@@ -44,7 +44,8 @@ class ObceModel(QAbstractListModel):
         self._district = "Zlín"
         self._zobrazit_mesta = True
         self._zobrazit_vesnice = True
-        self.kraj_filter_string = "" #"Vesnice" or "" or "Město"
+        self.is_city = "" #"Vesnice" or ""
+        self.is_vesnice = "" #"Město" or ""
         if filename:
             self.load_from_json(filename)
 
@@ -107,6 +108,7 @@ class ObceModel(QAbstractListModel):
     def set_zobrazit_vesnice(self, new_val):
         if new_val != self._zobrazit_vesnice:
             self._zobrazit_vesnice = new_val
+            print("zobrazit_vesnice: ", self._zobrazit_vesnice)
 
     def set_districts(self, new_val):
         if new_val != self._districts:
@@ -153,17 +155,20 @@ class ObceModel(QAbstractListModel):
     zobrazit_vesnice = Property(bool, lambda self: self._zobrazit_vesnice, set_zobrazit_vesnice, notify = zobrazit_vesnice_changed)
 
     @Slot()
-    def filtr_checkbox(self):
-        if self._zobrazit_mesta == False and self.zobrazit_vesnice == False:
-            self.kraj_filter_string = ""
-        elif self._zobrazit_mesta == True and self.zobrazit_vesnice == True:
-            self.kraj_filter_string = "999999999999999"
-        elif self._zobrazit_mesta == False and self.zobrazit_vesnice == True:
-            self.kraj_filter_string = "Město"
-        elif self._zobrazit_mesta == True and self.zobrazit_vesnice == False:
-            self.kraj_filter_string = "Vesnice"
-        print(self.kraj_filter_string + "toto nyní")
-        mesta_proxy.setFilterRegExp(QRegExp(obce_model.kraj_filter_string, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
+    def filtr_checkbox_city(self):
+        if self._zobrazit_mesta == False:
+            self.is_city = ""
+        elif self._zobrazit_mesta == True: 
+            self.is_city = "Vesnice"
+        mesta_proxy.setFilterRegExp(QRegExp(obce_model.is_city, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
+
+    @Slot()
+    def filtr_checkbox_obec(self):
+        if self._zobrazit_vesnice == False:
+            self.is_vesnice= ""
+        elif self._zobrazit_vesnice == True: 
+            self.is_vesnice = "Město"
+        obce_proxy.setFilterRegExp(QRegExp(obce_model.is_vesnice, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
 
 
 app = QGuiApplication(sys.argv)
@@ -175,9 +180,14 @@ mesta_proxy = QtCore.QSortFilterProxyModel()
 mesta_proxy.setSourceModel(obce_model)
 mesta_proxy.setFilterRole(obce_model.Roles.IS_CITY.value)
 
+obce_proxy = QtCore.QSortFilterProxyModel()
+obce_proxy.setSourceModel(mesta_proxy)
+obce_proxy.setFilterRole(obce_model.Roles.IS_CITY.value)
+#mesta_proxy.setFilterRegExp(QRegExp(obce_model.kraj_filter_string, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
+
 ctxt = view.rootContext()
 ctxt.setContextProperty("ObceModel", obce_model)
-ctxt.setContextProperty("FinalProxy", mesta_proxy)
+ctxt.setContextProperty("FinalProxy", obce_proxy)
 
 #ctxt.setContextProperty("FinalProxy", mesta_proxy)
 

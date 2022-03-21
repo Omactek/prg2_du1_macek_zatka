@@ -20,7 +20,7 @@ RowLayout {
             id: check_city
             text: "Města"
             checked: true
-            onCheckStateChanged: ObceModel.filtr_checkbox()
+            onCheckStateChanged: ObceModel.filtr_checkbox_city()
             Binding {
                 target: ObceModel
                 property: "zobrazit_mesta"
@@ -32,7 +32,7 @@ RowLayout {
             id: check_obec
             text: "Obce"
             checked: true
-            onCheckStateChanged: ObceModel.filtr_checkbox()
+            onCheckStateChanged: ObceModel.filtr_checkbox_obec()
             Binding {
                 target: ObceModel
                 property: "zobrazit_vesnice"
