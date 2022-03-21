@@ -40,7 +40,7 @@ class ObceModel(QAbstractListModel):
         QAbstractListModel.__init__(self)
         self.seznam_obci = []
         self._area = ""
-        self._districts = ["VŠE", "Kroměříž", "Uherské Hradiště", "Vsetín", "Zlín"]
+        self._districts = []
         self._district = ""
         self._zobrazit_mesta = True
         self._zobrazit_vesnice = True
@@ -106,8 +106,8 @@ class ObceModel(QAbstractListModel):
         if new_val != self._area:
             self._area = new_val
             self.area_changed.emit(self._area)
-            self.set_districts(choose_district(self.area))
             self.filtruj_kraje()
+            self.set_districts(choose_district(self.area))
 
     def set_districts(self, new_val): #filters districts based on selected area
         if new_val != self._districts:
