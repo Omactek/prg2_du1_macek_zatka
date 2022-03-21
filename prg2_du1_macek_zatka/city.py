@@ -70,6 +70,33 @@ class ObceModel(QAbstractListModel):
         print(roles)
         return roles
 
+
+    def get_cities(self):
+        return self._obce_mesta
+
+    def set_cities(self, bool):
+        if bool != self.zobrazit_mesta:
+            self._obce_mesta = bool
+            self.zobrazit_mesta_changed.emit()
+    
+    zobrazit_mesta_changed = Signal()
+    zobrazit_mesta = Property(bool, notify=zobrazit_mesta_changed)
+
+    def get_villages(self):
+        return self._obce_vesnice
+
+    def set_villages(self, bool):
+        if bool != self.zobrazit_vesnice:
+            self._obce_vesnice = bool
+            self.zobrazit_vesnice_changed.emit()
+    
+    zobrazit_vesnice_changed = Signal()
+    zobrazit_vesnice = Property(bool, notify=zobrazit_vesnice_changed)
+
+    @Slot()
+    def filtr_checkboxy(self):
+
+
 app = QGuiApplication(sys.argv)
 view = QQuickView()
 url = QUrl(VIEW_URL)
