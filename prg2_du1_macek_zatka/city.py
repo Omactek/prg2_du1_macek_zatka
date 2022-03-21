@@ -85,8 +85,8 @@ class ObceModel(QAbstractListModel):
     zobrazit_vesnice_changed = Signal()
     zobrazit_vesnice = Property(bool, notify=zobrazit_vesnice_changed)
 
-    @Slot()
-    def filtr_checkboxy(self):
+    #@Slot()
+    #def filtr_checkboxy(self):
 
 
 app = QGuiApplication(sys.argv)

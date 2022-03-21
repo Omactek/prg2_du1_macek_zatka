@@ -173,7 +173,7 @@ RowLayout {
 
         MapItemView {
             id: main_map
-            model: ObceModel
+            model: KrajeProxy
             delegate: MapQuickItem {
                 coordinate: model.location
                 sourceItem: Rectangle {
