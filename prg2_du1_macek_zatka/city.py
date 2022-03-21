@@ -199,7 +199,11 @@ obce_proxy.setSourceModel(mesta_proxy)
 obce_proxy.setFilterRole(obce_model.Roles.IS_CITY.value)
 
 kraje_proxy = QtCore.QSortFilterProxyModel()
+<<<<<<< HEAD
 kraje_proxy.setSourceModel(mesta_proxy)
+=======
+kraje_proxy.setSourceModel(obce_proxy)
+>>>>>>> 140554d50bb8bf04e909050dc7ff92f6e2a6c219
 kraje_proxy.setFilterRole(obce_model.Roles.REGION.value)
 
 ctxt = view.rootContext()
