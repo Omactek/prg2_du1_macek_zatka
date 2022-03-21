@@ -214,6 +214,7 @@ RowLayout {
                         else if (township == "Vesnice")
                             return idNotcityText
                 }
+                visible: slide.first.value <= model.population && slide.second.value >= model.population //hides settlements outside of slideranger range
                 
                 Component{
                     id: idCityText
@@ -249,6 +250,7 @@ RowLayout {
                         else if (township == "Vesnice")
                             return idNotcity
                 }
+                visible: slide.first.value <= model.population && slide.second.value >= model.population
                 
                 Component{
                     id: idCity
