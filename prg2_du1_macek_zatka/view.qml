@@ -53,24 +53,12 @@ RowLayout {
             RangeSlider {
                 id: slide
                 from: 1
-                to: 1000000
+                to: 1500000
                 first.value: 1
-                second.value: 1000000
+                second.value: 1500000
                 stepSize: 1000 //zatím nechávám na 1000, jinak to neházi integery
                 snapMode: RangeSlider.SnapAlways
-                first.onMoved: ObceModel.filtr_checkboxy()
-                second.onMoved: ObceModel.filtr_checkboxy()   
             }
-            Binding {
-                        target: ObceModel
-                        property: "min_slider"
-                        value: slide.first.value
-                    }
-            Binding {
-                        target: ObceModel
-                        property: "max_slider"
-                        value: slide.second.value
-                    }
 
             Text {
                 text: slide.first.value + " obyvatel"
@@ -104,7 +92,6 @@ RowLayout {
                     model: ["VŠE","Hlavní město Praha","Jihočeský kraj","Jihomoravský kraj","Karlovarský kraj",
                     "Kraj Vysočina","Královéhradecký kraj","Liberecký kraj","Moravskoslezský kraj","Olomoucký kraj",
                     "Pardubický kraj","Plzeňský kraj","Středočeský kraj","Ústecký kraj","Zlínský kraj"]
-                    onCurrentIndexChanged: ObceModel.filtr_checkboxy()
                 }
                 Binding{
                     target: ObceModel
@@ -121,7 +108,6 @@ RowLayout {
                     currentIndex: -1
                     id: combo_okres
                     model: dist
-                    onCurrentIndexChanged: ObceModel.filtr_checkboxy()
                 }
                 Binding{
                     target: ObceModel
@@ -156,8 +142,23 @@ RowLayout {
                 width: childrenRect.width
                 height: childrenRect.height
                 Text {
-                    text: model.display
-                }
+                        text: model.display + '<br>Rozloha: ' + model.area + ' km<sup>2</sup>' + '<br>Počet obyvatel: ' + model.population + '<br>'
+                        textFormat: Text.RichText
+                        color: {
+                            if (model.township == "Město")
+                                color = "red"
+                            if (model.township == "Vesnice")
+                                color = "black"
+
+                        }
+                        font.bold: {
+                            if (model.township == "Město")
+                                font.bold = true
+                            if (model.township == "Vesnice")
+                                font.bold = false
+
+                        }
+                    }
                 MouseArea {
                     anchors.fill: parent
                     onClicked: seznamObci.currentIndex = index
@@ -167,7 +168,7 @@ RowLayout {
 
         model: DelegateModel {
             id: settlementListDelegateModel
-            model: ObceModel
+            model: FinalProxy
             delegate: settlementListDelegate
         }
 

@@ -12,7 +12,7 @@ VIEW_URL = "view.qml"
 SEZNAM_OBCI = "obce.geojson"
 
 def choose_district(index):
-    districts = [["Praha"],[ "České Budějovice","Český Krumlov", "Jindřichův Hradec", "Písek",                            "Prachatice",                            "Strakonice",                            "Tábor"],        [ "Blansko",                                "Brno-město",                                "Brno-venkov",                                "Břeclav",                                "Hodonín",                                "Vyškov",                                "Znojmo"],[ "Cheb",                            "Karlovy Vary",                            "Sokolov"],[ "Havlíčkův Brod",                            "Jihlava",                            "Pelhřimov",                            "Třebíč",                            "Žďár nad Sázavou"],[ "Hradec Králové",                                "Jičín",                                "Náchod",                                "Rychnov nad Kněžnou",                                "Trutnov"],[ "Česká Lípa",                        "Jablonec nad Nisou",                        "Liberec",                        "Semily"],[ "Bruntál",                                "Frýdek-Místek",                                "Karviná",                                "Nový Jičín",                                "Opava",                                "Ostrava-město"],[ "Jeseník",                        "Olomouc",                        "Prostějov",                        "Přerov",                        "Šumperk"],[ "Chrudim",                            "Pardubice",                            "Svitavy",                            "Ústí nad Orlicí"],[ "Domažlice",                        "Klatovy",                        "Plzeň-jih",                        "Plzeň-město",                        "Plzeň-sever",                        "Rokycany",                        "Tachov"],[ "Benešov",                            "Beroun",                            "Kladno",                            "Kolín",                            "Kutná Hora",                            "Mělník",                            "Mladá Boleslav",                            "Nymburk",                            "Praha-východ",                            "Praha-západ",                            "Příbram",                            "Rakovník"],[ "Děčín",                        "Chomutov",                        "Litoměřice",                        "Louny",                        "Most",                        "Teplice",                        "Ústí nad Labem"],[ "Kroměříž",                        "Uherské Hradiště",                        "Vsetín",                        "Zlín"]]
+    districts = [["VŠE"],["Praha"],[ "České Budějovice","Český Krumlov", "Jindřichův Hradec", "Písek",                            "Prachatice",                            "Strakonice",                            "Tábor"],        [ "Blansko",                                "Brno-město",                                "Brno-venkov",                                "Břeclav",                                "Hodonín",                                "Vyškov",                                "Znojmo"],[ "Cheb",                            "Karlovy Vary",                            "Sokolov"],[ "Havlíčkův Brod",                            "Jihlava",                            "Pelhřimov",                            "Třebíč",                            "Žďár nad Sázavou"],[ "Hradec Králové",                                "Jičín",                                "Náchod",                                "Rychnov nad Kněžnou",                                "Trutnov"],[ "Česká Lípa",                        "Jablonec nad Nisou",                        "Liberec",                        "Semily"],[ "Bruntál",                                "Frýdek-Místek",                                "Karviná",                                "Nový Jičín",                                "Opava",                                "Ostrava-město"],[ "Jeseník",                        "Olomouc",                        "Prostějov",                        "Přerov",                        "Šumperk"],[ "Chrudim",                            "Pardubice",                            "Svitavy",                            "Ústí nad Orlicí"],[ "Domažlice",                        "Klatovy",                        "Plzeň-jih",                        "Plzeň-město",                        "Plzeň-sever",                        "Rokycany",                        "Tachov"],[ "Benešov",                            "Beroun",                            "Kladno",                            "Kolín",                            "Kutná Hora",                            "Mělník",                            "Mladá Boleslav",                            "Nymburk",                            "Praha-východ",                            "Praha-západ",                            "Příbram",                            "Rakovník"],[ "Děčín",                        "Chomutov",                        "Litoměřice",                        "Louny",                        "Most",                        "Teplice",                        "Ústí nad Labem"],[ "Kroměříž",                        "Uherské Hradiště",                        "Vsetín",                        "Zlín"]]
     if int(index) == 0:
         merged = []
         for i in range(0,14):
@@ -21,7 +21,7 @@ def choose_district(index):
         merged.append("VŠE")
         return merged
     
-    di = districts[int(index)-1]
+    di = districts[int(index)]
     a = ['VŠE']
     dist = a + di
     return dist
@@ -39,9 +39,9 @@ class ObceModel(QAbstractListModel):
     def __init__(self, filename=None):
         QAbstractListModel.__init__(self)
         self.seznam_obci = []
-        self._area = "Zlínský kraj"
+        self._area = ""
         self._districts = ["VŠE", "Kroměříž", "Uherské Hradiště", "Vsetín", "Zlín"]
-        self._district = "Zlín"
+        self._district = ""
         self._zobrazit_mesta = True
         self._zobrazit_vesnice = True
         self.is_city = "" #"Vesnice" or ""
@@ -91,38 +91,37 @@ class ObceModel(QAbstractListModel):
         roles[self.Roles.IS_CITY.value] = QByteArray(b'township')
         print(roles)
         return roles
+    
+    def set_mesta(self, new_val):
+        if new_val != self._zobrazit_mesta:
+            self._zobrazit_mesta = new_val
+            self.filtr_checkbox_city()
 
+    def set_zobrazit_vesnice(self, new_val):
+        if new_val != self._zobrazit_vesnice:
+            self._zobrazit_vesnice = new_val
+            self.filtr_checkbox_obec()
 
     def set_area(self, new_val):
         if new_val != self._area:
             self._area = new_val
             self.area_changed.emit(self._area)
-            print("Filter area:", self._area)
             self.set_districts(choose_district(self.area))
-    
-    def set_mesta(self, new_val):
-        if new_val != self._zobrazit_mesta:
-            self._zobrazit_mesta = new_val
-            print("zobrazit_mesta: ", self._zobrazit_mesta)
-            ObceModel.filtr_checkbox_city(self)
+            self.filtruj_kraje()
 
-    def set_zobrazit_vesnice(self, new_val):
-        if new_val != self._zobrazit_vesnice:
-            self._zobrazit_vesnice = new_val
-            print("zobrazit_vesnice: ", self._zobrazit_vesnice)
-            ObceModel.filtr_checkbox_obec(self)
-
-    def set_districts(self, new_val):
+    def set_districts(self, new_val): #filters districts based on selected area
         if new_val != self._districts:
             self._districts = new_val
-            print("Filter districts:", self._districts)
+            print(self._districts)
             ctxt.setContextProperty("dist", self._districts)
 
     def set_district(self, new_val):
         if new_val != self._district:
             self._district = new_val
+            print("toto je self._districts: ")
             self.district_changed.emit(self._district)
-            print("Filter final district:", self._district)
+            print(self._district)
+            self.filtruj_okresy()
 
   
     def get_district(self):
@@ -138,24 +137,16 @@ class ObceModel(QAbstractListModel):
         return self.get_max_slider
 
 
+    zobrazit_mesta_changed = Signal()
+    zobrazit_vesnice_changed = Signal()
     kraj_change = Signal()
     area_changed = Signal(str)
     district_changed = Signal(str)
 
-    zobrazit_vesnice = Property(bool, get_zobrazit_vesnice)
-    
-    min_slider = Property(int, get_min_slider)
-    max_slider = Property(int, get_max_slider)
-
-    area = Property(str, lambda self: self._area, set_area, notify=area_changed)
-    district = Property(str, get_district, set_district, notify=district_changed)
-
-    zobrazit_mesta_changed = Signal()
     zobrazit_mesta = Property(bool, lambda self: self._zobrazit_mesta, set_mesta, notify = zobrazit_mesta_changed)
-
-    zobrazit_vesnice_changed = Signal()
     zobrazit_vesnice = Property(bool, lambda self: self._zobrazit_vesnice, set_zobrazit_vesnice, notify = zobrazit_vesnice_changed)
-
+    area = Property(str, lambda self: self._area, set_area, notify=area_changed)
+    district = Property(str,lambda self: self._district, set_district, notify=district_changed)
     
     def filtr_checkbox_city(self):
         if self._zobrazit_mesta:
@@ -172,12 +163,20 @@ class ObceModel(QAbstractListModel):
             self.is_vesnice = "Město"
         obce_proxy.setFilterRegExp(QRegExp(obce_model.is_vesnice, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
 
-    @Slot()
     def filtruj_kraje(self):
         sz = ["VŠE", "Hlavní město Praha","Jihočeský kraj","Jihomoravský kraj","Karlovarský kraj","Kraj Vysočina","Královéhradecký kraj","Liberecký kraj","Moravskoslezský kraj","Olomoucký kraj","Pardubický kraj","Plzeňský kraj","Středočeský kraj","Ústecký kraj","Zlínský kraj"]
         kraje_str = sz[int(obce_model._area)]
+        if kraje_str == "VŠE":
+            kraje_str = ""
         kraje_proxy.setFilterRegExp(QRegExp(kraje_str, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
         print(obce_model._area)
+
+    def filtruj_okresy(self):
+        okresy_str = self._district
+        if okresy_str == "VŠE":
+            okresy_str = ""
+        print(okresy_str)
+        okresy_proxy.setFilterRegExp(QRegExp(okresy_str, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
 
 app = QGuiApplication(sys.argv)
 view = QQuickView()
@@ -193,13 +192,16 @@ obce_proxy.setSourceModel(mesta_proxy)
 obce_proxy.setFilterRole(obce_model.Roles.IS_CITY.value)
 
 kraje_proxy = QtCore.QSortFilterProxyModel()
-kraje_proxy.setSourceModel(mesta_proxy)
 kraje_proxy.setSourceModel(obce_proxy)
 kraje_proxy.setFilterRole(obce_model.Roles.REGION.value)
 
+okresy_proxy = QtCore.QSortFilterProxyModel()
+okresy_proxy.setSourceModel(kraje_proxy)
+okresy_proxy.setFilterRole(obce_model.Roles.DISTRICT.value)
+
 ctxt = view.rootContext()
 ctxt.setContextProperty("ObceModel", obce_model)
-ctxt.setContextProperty("FinalProxy", obce_proxy)
+ctxt.setContextProperty("FinalProxy", okresy_proxy)
 
 
 view.setSource(url)
