@@ -60,8 +60,8 @@ RowLayout {
                 second.value: 1000000
                 stepSize: 1000 //zatím nechávám na 1000, jinak to neházi integery
                 snapMode: RangeSlider.SnapAlways
-                first.onMoved: ObceModel.filtr_checkboxy()
-                second.onMoved: ObceModel.filtr_checkboxy()   
+                //first.onMoved: ObceModel.filtr_checkboxy()
+                //second.onMoved: ObceModel.filtr_checkboxy()   
             }
             Binding {
                         target: ObceModel
@@ -106,7 +106,7 @@ RowLayout {
                     model: ["VŠE","Hlavní město Praha","Jihočeský kraj","Jihomoravský kraj","Karlovarský kraj",
                     "Kraj Vysočina","Královéhradecký kraj","Liberecký kraj","Moravskoslezský kraj","Olomoucký kraj",
                     "Pardubický kraj","Plzeňský kraj","Středočeský kraj","Ústecký kraj","Zlínský kraj"]
-                    onCurrentIndexChanged: ObceModel.filtr_checkboxy()
+                    onCurrentIndexChanged: ObceModel.filtruj_kraje()
                 }
                 Binding{
                     target: ObceModel

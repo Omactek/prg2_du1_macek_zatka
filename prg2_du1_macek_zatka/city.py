@@ -169,7 +169,21 @@ class ObceModel(QAbstractListModel):
         elif self._zobrazit_vesnice == True: 
             self.is_vesnice = "Město"
         obce_proxy.setFilterRegExp(QRegExp(obce_model.is_vesnice, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
+    
+    @Slot()
+    def filtr_checkbox_obec(self):
+        if self._zobrazit_vesnice == False:
+            self.is_vesnice= ""
+        elif self._zobrazit_vesnice == True: 
+            self.is_vesnice = "Město"
+        obce_proxy.setFilterRegExp(QRegExp(obce_model.is_vesnice, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
 
+    @Slot()
+    def filtruj_kraje(self):
+        sz = ["VŠE", "Hlavní město Praha","Jihočeský kraj","Jihomoravský kraj","Karlovarský kraj","Kraj Vysočina","Královéhradecký kraj","Liberecký kraj","Moravskoslezský kraj","Olomoucký kraj","Pardubický kraj","Plzeňský kraj","Středočeský kraj","Ústecký kraj","Zlínský kraj"]
+        kraje_str = sz[int(obce_model._area)]
+        kraje_proxy.setFilterRegExp(QRegExp(kraje_str, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
+        print(obce_model._area)
 
 app = QGuiApplication(sys.argv)
 view = QQuickView()
@@ -184,9 +198,14 @@ obce_proxy = QtCore.QSortFilterProxyModel()
 obce_proxy.setSourceModel(mesta_proxy)
 obce_proxy.setFilterRole(obce_model.Roles.IS_CITY.value)
 
+kraje_proxy = QtCore.QSortFilterProxyModel()
+kraje_proxy.setSourceModel(mesta_proxy)
+kraje_proxy.setFilterRole(obce_model.Roles.REGION.value)
+
 ctxt = view.rootContext()
 ctxt.setContextProperty("ObceModel", obce_model)
 ctxt.setContextProperty("FinalProxy", obce_proxy)
+
 
 view.setSource(url)
 view.show()
