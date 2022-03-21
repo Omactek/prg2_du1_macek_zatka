@@ -81,14 +81,6 @@ class ObceModel(QAbstractListModel):
     
     zobrazit_mesta_changed = Signal()
     zobrazit_mesta = Property(bool, notify=zobrazit_mesta_changed)
-
-    def get_villages(self):
-        return self._obce_vesnice
-
-    def set_villages(self, bool):
-        if bool != self.zobrazit_vesnice:
-            self._obce_vesnice = bool
-            self.zobrazit_vesnice_changed.emit()
     
     zobrazit_vesnice_changed = Signal()
     zobrazit_vesnice = Property(bool, notify=zobrazit_vesnice_changed)
