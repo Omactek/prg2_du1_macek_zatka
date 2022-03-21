@@ -68,12 +68,12 @@ RowLayout {
             Binding {
                         target: ObceModel
                         property: "min_slider"
-                        value: rangeSlider.first.value
+                        value: slide.first.value
                     }
             Binding {
                         target: ObceModel
                         property: "max_slider"
-                        value: rangeSlider.second.value
+                        value: slide.second.value
                     }
 
             Text {
