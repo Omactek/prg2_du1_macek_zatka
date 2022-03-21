@@ -148,7 +148,13 @@ class ObceModel(QAbstractListModel):
     def filtr_checkboxy(self):
         print("probehlo")
         print(self.area)
-
+        print("probehlo")
+        print(self.area)
+        if self._zobrazit_mesta == False:
+            self.kraj_filter_string = "Vesnice"
+            mesta_proxy.setFilterRegExp(QRegExp(obce_model.kraj_filter_string, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
+        else:
+            self.kraj_filter_string = "Vesnice"
 
 app = QGuiApplication(sys.argv)
 view = QQuickView()
