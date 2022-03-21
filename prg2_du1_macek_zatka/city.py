@@ -42,8 +42,10 @@ class ObceModel(QAbstractListModel):
         self._area = "Zlínský kraj"
         self._districts = ["VŠE", "Kroměříž", "Uherské Hradiště", "Vsetín", "Zlín"]
         self._district = "Zlín"
-        self._zobrazit_mesta = ""
-        self.kraj_filter_string = "Město" # "Město" or "Vesnice" or ""
+        self._zobrazit_mesta = True
+        self._zobrazit_vesnice = True
+        self.is_city = "" #"Vesnice" or ""
+        self.is_vesnice = "" #"Město" or ""
         if filename:
             self.load_from_json(filename)
 
@@ -101,8 +103,12 @@ class ObceModel(QAbstractListModel):
     def set_mesta(self, new_val):
         if new_val != self._zobrazit_mesta:
             self._zobrazit_mesta = new_val
-            #self.zobrazit_mesta.emit(self._zobrazit_mesta)
             print("zobrazit_mesta: ", self._zobrazit_mesta)
+
+    def set_zobrazit_vesnice(self, new_val):
+        if new_val != self._zobrazit_vesnice:
+            self._zobrazit_vesnice = new_val
+            print("zobrazit_vesnice: ", self._zobrazit_vesnice)
 
     def set_districts(self, new_val):
         if new_val != self._districts:
@@ -130,6 +136,7 @@ class ObceModel(QAbstractListModel):
         return self.get_max_slider
 
 
+    kraj_change = Signal()
     area_changed = Signal(str)
     district_changed = Signal(str)
 
@@ -142,19 +149,27 @@ class ObceModel(QAbstractListModel):
     district = Property(str, get_district, set_district, notify=district_changed)
 
     zobrazit_mesta_changed = Signal()
-    zobrazit_mesta = Property(bool, lambda self: self._area, set_mesta, notify = zobrazit_mesta_changed)
+    zobrazit_mesta = Property(bool, lambda self: self._zobrazit_mesta, set_mesta, notify = zobrazit_mesta_changed)
+
+    zobrazit_vesnice_changed = Signal()
+    zobrazit_vesnice = Property(bool, lambda self: self._zobrazit_vesnice, set_zobrazit_vesnice, notify = zobrazit_vesnice_changed)
 
     @Slot()
-    def filtr_checkboxy(self):
-        print("probehlo")
-        print(self.area)
-        print("probehlo")
-        print(self.area)
+    def filtr_checkbox_city(self):
         if self._zobrazit_mesta == False:
-            self.kraj_filter_string = "Vesnice"
-            mesta_proxy.setFilterRegExp(QRegExp(obce_model.kraj_filter_string, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
-        else:
-            self.kraj_filter_string = "Vesnice"
+            self.is_city = ""
+        elif self._zobrazit_mesta == True: 
+            self.is_city = "Vesnice"
+        mesta_proxy.setFilterRegExp(QRegExp(obce_model.is_city, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
+
+    @Slot()
+    def filtr_checkbox_obec(self):
+        if self._zobrazit_vesnice == False:
+            self.is_vesnice= ""
+        elif self._zobrazit_vesnice == True: 
+            self.is_vesnice = "Město"
+        obce_proxy.setFilterRegExp(QRegExp(obce_model.is_vesnice, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
+
 
 app = QGuiApplication(sys.argv)
 view = QQuickView()
@@ -164,11 +179,14 @@ obce_model = ObceModel(SEZNAM_OBCI)
 mesta_proxy = QtCore.QSortFilterProxyModel()
 mesta_proxy.setSourceModel(obce_model)
 mesta_proxy.setFilterRole(obce_model.Roles.IS_CITY.value)
+
+obce_proxy = QtCore.QSortFilterProxyModel()
+obce_proxy.setSourceModel(mesta_proxy)
+obce_proxy.setFilterRole(obce_model.Roles.IS_CITY.value)
+
 ctxt = view.rootContext()
 ctxt.setContextProperty("ObceModel", obce_model)
-ctxt.setContextProperty("FinalProxy", mesta_proxy)
-
-#ctxt.setContextProperty("FinalProxy", mesta_proxy)
+ctxt.setContextProperty("FinalProxy", obce_proxy)
 
 view.setSource(url)
 view.show()
