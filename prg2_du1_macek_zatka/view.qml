@@ -31,7 +31,6 @@ RowLayout {
             id: check_obec
             text: "Obce"
             checked: true
-            onCheckStateChanged: ObceModel.filtr_checkbox_obec()
             Binding {
                 target: ObceModel
                 property: "zobrazit_vesnice"

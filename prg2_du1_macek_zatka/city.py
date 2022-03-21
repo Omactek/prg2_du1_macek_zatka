@@ -171,14 +171,6 @@ class ObceModel(QAbstractListModel):
         elif not self._zobrazit_vesnice: 
             self.is_vesnice = "Město"
         obce_proxy.setFilterRegExp(QRegExp(obce_model.is_vesnice, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
-    
-    @Slot()
-    def filtr_checkbox_obec(self):
-        if self._zobrazit_vesnice:
-            self.is_vesnice= ""
-        elif not self._zobrazit_vesnice: 
-            self.is_vesnice = "Město"
-        obce_proxy.setFilterRegExp(QRegExp(obce_model.is_vesnice, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
 
     @Slot()
     def filtruj_kraje(self):
