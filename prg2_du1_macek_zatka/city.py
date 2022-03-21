@@ -122,7 +122,6 @@ class ObceModel(QAbstractListModel):
         return self.get_max_slider
 
 
-    kraj_change = Signal()
     area_changed = Signal(str)
     district_changed = Signal(str)
 
@@ -138,6 +137,7 @@ class ObceModel(QAbstractListModel):
     @Slot()
     def filtr_checkboxy(self):
         print("probehlo")
+        print(self.area)
 
 
 app = QGuiApplication(sys.argv)
