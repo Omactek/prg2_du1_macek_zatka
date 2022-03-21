@@ -69,24 +69,29 @@ class ObceModel(QAbstractListModel):
         roles[self.Roles.IS_CITY.value] = QByteArray(b'township')
         print(roles)
         return roles
+  
 
+    def get_zobrazit_mesta(self):
+        return self.zobrazit_mesta    
+    def get_zobrazit_vesnice(self):
+        return self.zobrazit_vesnice
+    def get_min_slider(self):
+        return self.get_min_slider
+    def get_max_slider(self):
+        return self.get_max_slider
 
-    def get_cities(self):
-        return self._obce_mesta
-
-    def set_cities(self, bool):
-        if bool != self.zobrazit_mesta:
-            self._obce_mesta = bool
-            self.zobrazit_mesta_changed.emit()
+    zobrazit_mesta = Property(bool, get_zobrazit_mesta) 
+    zobrazit_vesnice = Property(bool, get_zobrazit_vesnice)
     
-    zobrazit_mesta_changed = Signal()
-    zobrazit_mesta = Property(bool, notify=zobrazit_mesta_changed)
-    
-    zobrazit_vesnice_changed = Signal()
-    zobrazit_vesnice = Property(bool, notify=zobrazit_vesnice_changed)
+    min_slider = Property(int, get_min_slider)
+    max_slider = Property(int, get_max_slider)
 
     @Slot()
     def filtr_checkboxy(self):
+        print("probehlo")
+
+        
+
 
 
 app = QGuiApplication(sys.argv)

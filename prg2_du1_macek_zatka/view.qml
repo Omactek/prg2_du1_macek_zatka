@@ -61,8 +61,20 @@ RowLayout {
                 first.value: 1
                 second.value: 1000000
                 stepSize: 1000 //zatím nechávám na 1000, jinak to neházi integery
-                snapMode: RangeSlider.SnapAlways 
+                snapMode: RangeSlider.SnapAlways
+                first.onMoved: ObceModel.filtr_checkboxy()
+                second.onMoved: ObceModel.filtr_checkboxy()   
             }
+            Binding {
+                        target: ObceModel
+                        property: "min_slider"
+                        value: rangeSlider.first.value
+                    }
+            Binding {
+                        target: ObceModel
+                        property: "max_slider"
+                        value: rangeSlider.second.value
+                    }
 
             Text {
                 text: slide.first.value + " obyvatel"
