@@ -31,6 +31,9 @@ class ObceModel(QAbstractListModel):
         if filename:
             self.load_from_json(filename)
 
+    #set variables
+    kraj_check = ""
+
     def load_from_json(self, filename):
         with open (filename, encoding = "utf-8") as file:
             self.seznam_obci = json.load(file)
