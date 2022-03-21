@@ -88,7 +88,6 @@ RowLayout {
 
                 ComboBox {
                     id: combo_kraj
-                    currentIndex: -1
                     model: ["VŠE","Hlavní město Praha","Jihočeský kraj","Jihomoravský kraj","Karlovarský kraj",
                     "Kraj Vysočina","Královéhradecký kraj","Liberecký kraj","Moravskoslezský kraj","Olomoucký kraj",
                     "Pardubický kraj","Plzeňský kraj","Středočeský kraj","Ústecký kraj","Zlínský kraj"]
@@ -105,7 +104,6 @@ RowLayout {
                 }
 
                 ComboBox {
-                    currentIndex: -1
                     id: combo_okres
                     model: dist
                 }
