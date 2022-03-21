@@ -170,6 +170,10 @@ class ObceModel(QAbstractListModel):
             self.is_vesnice = "Město"
         obce_proxy.setFilterRegExp(QRegExp(obce_model.is_vesnice, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
 
+    @Slot()
+    def filtruj_kraje(self):
+        kraje_proxy.setFilterRegExp(QRegExp(obce_model.<nazev_kraje>, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
+
 
 app = QGuiApplication(sys.argv)
 view = QQuickView()
@@ -183,6 +187,10 @@ mesta_proxy.setFilterRole(obce_model.Roles.IS_CITY.value)
 obce_proxy = QtCore.QSortFilterProxyModel()
 obce_proxy.setSourceModel(mesta_proxy)
 obce_proxy.setFilterRole(obce_model.Roles.IS_CITY.value)
+
+kraje_proxy = QtCore.QSortFilterProxyModel()
+kraje_proxy.setSourceModel(obce_proxy)
+kraje_proxy.setFilterRole(obce_model.Roles.REGION.value)
 
 ctxt = view.rootContext()
 ctxt.setContextProperty("ObceModel", obce_model)
