@@ -204,7 +204,7 @@ RowLayout {
         zoomLevel: 10
 
         MapItemView {
-            model: ObceModel
+            model: FinalProxy
             delegate: MapQuickItem {
                 coordinate: model.location
                 sourceItem: Loader{
@@ -240,7 +240,7 @@ RowLayout {
 
         MapItemView {
             id: main_map
-            model: ObceModel
+            model: FinalProxy
             delegate: MapQuickItem {
                 coordinate: model.location
                 sourceItem: Loader{

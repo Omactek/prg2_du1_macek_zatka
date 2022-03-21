@@ -1,4 +1,4 @@
-from PySide2.QtCore import QObject, Slot, Property, QUrl, Signal, QTimer, QAbstractListModel, QByteArray
+from PySide2.QtCore import QObject, Slot, Property, QUrl, Signal, QTimer, QAbstractListModel, QByteArray, QRegExp
 from PySide2.QtGui import QGuiApplication
 from PySide2.QtQuick import QQuickView
 from PySide2.QtPositioning import QGeoCoordinate
@@ -43,6 +43,7 @@ class ObceModel(QAbstractListModel):
         self._districts = ["VŠE", "Kroměříž", "Uherské Hradiště", "Vsetín", "Zlín"]
         self._district = "Zlín"
         self._zobrazit_mesta = ""
+        self.kraj_filter_string = "Město" # "Město" or "Vesnice" or ""
         if filename:
             self.load_from_json(filename)
 
@@ -146,15 +147,27 @@ class ObceModel(QAbstractListModel):
 
     @Slot()
     def filtr_checkboxy(self):
-        print("probehlo")
+        if self._zobrazit_mesta == False:
+            self.kraj_filter_string = "Vesnice"
+            mesta_proxy.setFilterRegExp(QRegExp(obce_model.kraj_filter_string, QtCore.Qt.CaseSensitivity.CaseInsensitive, QRegExp.FixedString))
+        else:
+            self.kraj_filter_string = "Vesnice"
 
 
 app = QGuiApplication(sys.argv)
 view = QQuickView()
 url = QUrl(VIEW_URL)
 obce_model = ObceModel(SEZNAM_OBCI)
+
+mesta_proxy = QtCore.QSortFilterProxyModel()
+mesta_proxy.setSourceModel(obce_model)
+mesta_proxy.setFilterRole(obce_model.Roles.IS_CITY.value)
 ctxt = view.rootContext()
 ctxt.setContextProperty("ObceModel", obce_model)
+ctxt.setContextProperty("FinalProxy", mesta_proxy)
+
+#ctxt.setContextProperty("FinalProxy", mesta_proxy)
+
 view.setSource(url)
 view.show()
 app.exec_()
